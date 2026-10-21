@@ -3,245 +3,308 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tomato-AI · Así ve una planta con luz que no vemos</title>
-<meta name="description" content="Proyecto Tomato-AI (UPCT, Reto TomatoLED-NDVI): un fenotipador portátil de bajo coste que mide la salud de las plantas con NDVI.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍅</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>Tomato LED-NDVI · UPCT · Semana de la Ciencia</title>
+<meta name="description" content="Tomato LED-NDVI: fenotipado vegetal portátil con NDVI. Proyecto de la UPCT (Reto Tomato LED-NDVI).">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='1' x2='0' y2='0'><stop offset='0' stop-color='%23440154'/><stop offset='.5' stop-color='%2321918c'/><stop offset='1' stop-color='%23fde725'/></linearGradient></defs><path d='M50 6C78 20 88 54 66 80 60 88 54 93 50 98 46 93 40 88 34 80 12 54 22 20 50 6Z' fill='url(%23g)'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f1f6f2;--card:#fff;--ink:#14261b;--mute:#516458;--leaf:#1d7a3e;--deep:#0f3321;--tom:#d93d27;--line:#d3e0d6;--bueno:#00a514;--reg:#c78800;--malo:#bd0000;
---hd:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--bd:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a12;--card:#15281c;--ink:#e6f1e9;--mute:#9db5a5;--leaf:#4fcf78;--deep:#06120b;--line:#264233}}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 1.05rem/1.6 var(--bd)}
+:root{--bg:#f1f6f2;--card:#fff;--ink:#14261b;--mute:#516458;--leaf:#1d7a3e;--deep:#0f3321;--tom:#d93d27;--line:#d3e0d6;--bueno:#00a514;--reg:#c78800;--malo:#bd0000;--hd:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--bd:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a12;--card:#15281c;--ink:#e6f1e9;--mute:#9db5a5;--leaf:#4fcf78;--line:#264233}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.04rem/1.6 var(--bd)}
 h1,h2,h3{font-family:var(--hd);line-height:1.1;margin:0 0 .5em;letter-spacing:-.01em}
-h1{font-size:clamp(2.4rem,7vw,4.6rem);font-weight:800}
-h2{font-size:clamp(1.7rem,4vw,2.5rem);font-weight:700}
-h3{font-size:1.2rem;font-weight:700}
-p{max-width:62ch;margin:0 0 1em}
-section{padding:4.5rem 1.25rem;max-width:1080px;margin:0 auto}
-.lead{font-size:1.2rem;color:var(--mute)}
-a{color:var(--leaf)}
+h1{font-size:clamp(2.3rem,6.5vw,4.3rem);font-weight:800}h2{font-size:clamp(1.6rem,4vw,2.4rem)}h3{font-size:1.15rem}
+p{max-width:64ch;margin:0 0 1em}a{color:var(--leaf)}
 :focus-visible{outline:3px solid var(--tom);outline-offset:3px}
-
+.lead{font-size:1.15rem;color:var(--mute)}
+/* NAV */
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.bar{max-width:1100px;margin:auto;display:flex;align-items:center;gap:1rem;padding:.5rem 1rem}
+.brand{font:800 1.15rem var(--hd);white-space:nowrap;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:.5rem}.lg{width:26px;height:26px}@media(max-width:700px){.bar{flex-wrap:wrap;gap:.2rem}nav{margin-left:0;width:100%}}
+nav{display:flex;gap:.3rem;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+nav a{white-space:nowrap;text-decoration:none;color:var(--mute);font-weight:700;font-size:.93rem;padding:.55rem .9rem;border-radius:99px;min-height:44px;display:flex;align-items:center;transition:.2s}
+nav a:hover{color:var(--ink)}nav a[aria-current=page]{background:var(--deep);color:#fff}
+/* TABS */
+main{max-width:1100px;margin:auto;padding:0 1.25rem}
+.tab{display:none;padding:3rem 0 4rem}.tab.on{display:block;animation:in .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(18px)}}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.4rem}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.tag{display:inline-block;background:var(--deep);color:#e6f1e9;border-radius:99px;padding:.3rem .9rem;font-size:.88rem;margin-bottom:1rem}
+button,.btn{font:700 .95rem var(--bd);border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:.6rem 1.2rem;cursor:pointer;min-height:44px;text-decoration:none;display:inline-flex;align-items:center;transition:.2s}
+button:hover,.btn:hover{border-color:var(--leaf);transform:translateY(-2px)}
+.btn.p{background:var(--tom);border-color:var(--tom);color:#fff}
 /* HERO */
-.hero{display:grid;gap:2rem;align-items:center;padding-top:3rem}
-@media(min-width:820px){.hero{grid-template-columns:1.1fr 1fr}}
-.tag{display:inline-block;background:var(--deep);color:#e6f1e9;border-radius:99px;padding:.3rem .9rem;font-size:.9rem;margin-bottom:1rem}
-.scan{position:relative;aspect-ratio:1;max-width:460px;width:100%;margin:auto;border-radius:28px;background:#0b1a11;overflow:hidden;box-shadow:0 20px 50px -20px #0f3321aa}
+.hero{display:grid;gap:2rem;align-items:center}@media(min-width:820px){.hero{grid-template-columns:1.1fr 1fr}}
+.scan{position:relative;aspect-ratio:1;max-width:420px;width:100%;margin:auto;border-radius:28px;background:#0b1a11;overflow:hidden;box-shadow:0 24px 50px -22px #0f3321cc}
 .scan svg{position:absolute;inset:0;width:100%;height:100%}
 .scan .nd{clip-path:inset(0 100% 0 0);animation:rev 6s ease-in-out infinite alternate}
-.scan .ln{position:absolute;top:0;bottom:0;width:3px;background:#fff;box-shadow:0 0 18px 4px #fff9;left:0;animation:mv 6s ease-in-out infinite alternate}
-@keyframes rev{to{clip-path:inset(0 0 0 0)}}
-@keyframes mv{to{left:calc(100% - 3px)}}
-.scan figcaption{position:absolute;left:0;right:0;bottom:0;padding:.7rem 1rem;display:flex;justify-content:space-between;color:#e6f1e9;font-size:.85rem;background:linear-gradient(transparent,#000a)}
-@media(prefers-reduced-motion:reduce){.scan .nd{animation:none;clip-path:inset(0 50% 0 0)}.scan .ln{animation:none;left:50%}}
-
-/* PASOS */
-.steps{display:grid;gap:1rem;counter-reset:s;margin-top:2rem}
-@media(min-width:760px){.steps{grid-template-columns:repeat(3,1fr)}}
-.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.4rem;position:relative}
-.step::before{counter-increment:s;content:counter(s);position:absolute;top:-14px;left:1.2rem;background:var(--tom);color:#fff;font:800 1rem var(--hd);width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
-.step svg{width:100%;height:90px;margin-bottom:.6rem}
-.rot{transform-origin:60px 45px;animation:rot 5s ease-in-out infinite}
-@keyframes rot{0%,30%{transform:rotate(0)}55%,85%{transform:rotate(180deg)}100%{transform:rotate(0)}}
-@media(prefers-reduced-motion:reduce){.rot{animation:none}}
-
+.scan .ln{position:absolute;top:0;bottom:0;width:3px;background:#fff;box-shadow:0 0 18px 4px #fff9;animation:mv 6s ease-in-out infinite alternate}
+@keyframes rev{to{clip-path:inset(0 0 0 0)}}@keyframes mv{from{left:0}to{left:calc(100% - 3px)}}
+.scan figcaption{position:absolute;inset:auto 0 0;padding:.7rem 1rem;display:flex;justify-content:space-between;color:#e6f1e9;font-size:.82rem;background:linear-gradient(transparent,#000a)}
+.stats{display:flex;gap:2rem;flex-wrap:wrap;margin:1.5rem 0}.stats b{display:block;font:800 2.2rem var(--hd);color:var(--leaf)}.stats span{font-size:.9rem;color:var(--mute)}
+.paths{margin-top:3rem}.paths a.card{text-decoration:none;color:inherit;transition:.25s;display:block}.paths a.card:hover{transform:translateY(-6px);border-color:var(--leaf);box-shadow:0 14px 30px -18px var(--leaf)}
+.paths .ic{font-size:2rem}
+.logos{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin-top:2.5rem}
+.logos .pill{background:#fff;border-radius:14px;padding:.6rem 1rem;display:flex;align-items:center}.logos img{height:44px;width:auto}
+/* PHOTON SIM */
+.sim{background:#0b1a11;border-radius:22px;overflow:hidden}.sim svg{width:100%;display:block}
+.sim .sick .x{display:none}.sick .ra .y{display:none}.sim svg:not(.sick) .rb{display:none}
+.sw{display:flex;gap:.5rem;margin:1rem 0 .3rem;flex-wrap:wrap}.sw button[aria-pressed=true]{background:var(--deep);color:#fff;border-color:var(--deep)}
+.sunr{transform-origin:70px 130px;animation:spin 20s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 /* LAB */
-.lab{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:1.5rem;display:grid;gap:1.5rem;margin-top:1.5rem}
-@media(min-width:820px){.lab{grid-template-columns:1fr 1fr;padding:2rem}}
-.leafbox{display:grid;place-items:center;background:#0b1a11;border-radius:18px;padding:1rem}
-.leafbox svg{width:min(240px,70%);transition:filter .3s}
+.lab{display:grid;gap:1.5rem}@media(min-width:820px){.lab{grid-template-columns:1fr 1fr}}
+.leafbox{display:grid;place-items:center;background:#0b1a11;border-radius:18px;padding:1rem}.leafbox svg{width:min(230px,70%)}
 #leafFill{transition:fill .25s}
-.ctl label{display:flex;justify-content:space-between;font-weight:700;margin-top:1rem}
-input[type=range]{width:100%;accent-color:var(--leaf);height:2rem}
-.presets{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem}
-button{font:700 .95rem var(--bd);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:.5rem 1rem;cursor:pointer;min-height:44px}
-button:hover{border-color:var(--leaf)}
+.ctl label{display:flex;justify-content:space-between;font-weight:700;margin-top:1rem}input[type=range]{width:100%;accent-color:var(--leaf);height:2rem}
+.presets{display:flex;flex-wrap:wrap;gap:.5rem}
 .res{margin-top:1.2rem;padding:1rem;border-radius:14px;background:var(--bg);border:2px solid var(--bueno);transition:border-color .25s}
-.res b.big{font:800 2.4rem var(--hd);display:block}
-.formula{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95rem;color:var(--mute)}
-.zones{display:flex;height:12px;border-radius:9px;overflow:hidden;margin:.8rem 0 .2rem;position:relative}
-.zones i{display:block}
-.zones span{position:absolute;top:-4px;width:4px;height:20px;background:var(--ink);border-radius:2px;transition:left .25s}
-
-/* HARDWARE */
-.hw{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:2rem}
-.part{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.1rem;display:flex;flex-direction:column}
-.part img{width:100%;height:150px;object-fit:contain;margin-bottom:.8rem;background:var(--bg);border-radius:12px;padding:.5rem}
-.part p{font-size:.95rem;color:var(--mute);margin:0}
-.big-img{margin-top:1.5rem;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1rem;display:grid;gap:1rem;align-items:center}
-@media(min-width:760px){.big-img{grid-template-columns:1.3fr 1fr}}
-.big-img img{width:100%;height:auto}
-
-/* COSTES */
-.bars{margin-top:1.5rem;display:grid;gap:1rem}
-.bar .t{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-weight:700}
-.bar .t span{font-weight:500;color:var(--mute)}
-.track{height:26px;background:var(--line);border-radius:9px;overflow:hidden;margin:.3rem 0}
-.fill{height:100%;width:0;background:#7a8f82;border-radius:9px;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
-.bar.me .fill{background:var(--tom)}
-.bar small{color:var(--mute)}
-
-/* TRABAJO */
-details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.9rem 1.2rem;margin-bottom:.7rem}
-summary{cursor:pointer;font-weight:700;min-height:32px}
-details p{margin:.7rem 0 0}
-.gl{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:1rem 0 2rem}
-.gl div{background:var(--card);border-left:5px solid var(--leaf);border-radius:10px;padding:.8rem 1rem;font-size:.97rem}
-.gl b{display:block;font-family:var(--hd)}
-footer{background:var(--deep);color:#cfe3d5;text-align:center;padding:2.5rem 1.25rem;font-size:.95rem}
-footer p{margin:.3rem auto}
+.res .big{font:800 2.3rem var(--hd);display:block}.fm{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92rem;color:var(--mute)}
+.zones{display:flex;height:12px;border-radius:9px;overflow:hidden;margin:.8rem 0;position:relative}.zones span{position:absolute;top:-4px;width:4px;height:20px;background:var(--ink);transition:left .25s}
+/* STEPS / HW / TABLE */
+.steps{counter-reset:s}.steps .card{position:relative;padding-top:1.8rem}.steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:-14px;left:1.2rem;background:var(--tom);color:#fff;font:800 1rem var(--hd);width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
+.part img{width:100%;height:140px;object-fit:contain;background:var(--bg);border-radius:12px;padding:.5rem;margin-bottom:.7rem}.part p,.sm{font-size:.94rem;color:var(--mute);margin:0}
+figure{margin:0}figure img{width:100%;height:auto;border-radius:14px;display:block}figcaption.c{font-size:.88rem;color:var(--mute);margin-top:.5rem}
+.two{display:grid;gap:1.5rem;align-items:center;margin:1.5rem 0}@media(min-width:800px){.two{grid-template-columns:1fr 1fr}}
+.ov{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:640px;font-size:.93rem}th,td{text-align:left;padding:.7rem;border-bottom:1px solid var(--line);vertical-align:top}th{font-family:var(--hd)}tr.me td{background:color-mix(in srgb,var(--tom) 10%,transparent);font-weight:700}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--bg);padding:.1rem .35rem;border-radius:6px;font-size:.9em}
+h2.s{margin-top:3rem}.fx{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--leaf);border-radius:14px;padding:1.2rem 1.4rem;margin:1.2rem 0}.fx>span{display:block;font:700 clamp(1.1rem,3.4vw,1.6rem) var(--hd);margin-bottom:.5rem}.fx p{margin:0}.sem .card{border-left:6px solid var(--c)}.zl{display:flex;font-size:.72rem;color:var(--mute);margin-top:-.4rem}.zl span{text-align:center}pre{background:#0b1a11;color:#cfe3d5;border-radius:14px;padding:1rem;overflow-x:auto;font-size:.88rem;margin:1.2rem 0 .3rem}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.9rem 1.2rem;margin-bottom:.7rem}summary{cursor:pointer;font-weight:700;min-height:32px}details p{margin:.7rem 0 0}
+/* FUTURO */
+.gantry{background:#0b1a11;border-radius:22px;overflow:hidden}.gantry svg{width:100%;display:block}
+.hd{animation:sweep 8s ease-in-out infinite alternate}@keyframes sweep{to{transform:translateX(330px)}}
+}
+.loop{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin:1.5rem 0}
+.loop .card{animation:hl 8s infinite;animation-delay:calc(var(--i)*2s)}@keyframes hl{0%,22%{border-color:var(--tom);box-shadow:0 0 0 3px #d93d2733}30%,100%{border-color:var(--line);box-shadow:none}}
+/* CONTACTO */
+form{display:grid;gap:.8rem}label.f{font-weight:700;font-size:.93rem;display:grid;gap:.3rem}
+input[type=text],input[type=email],select,textarea{font:inherit;padding:.7rem .9rem;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);min-height:44px}
+footer{background:var(--deep);color:#cfe3d5;text-align:center;padding:2rem 1.25rem;font-size:.93rem}footer p{margin:.3rem auto}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.scan .nd{clip-path:inset(0 50% 0 0)}.scan .ln{left:50%}.rv{opacity:1;transform:none}}
 </style>
 </head>
 <body>
+<header><div class="bar"><a class="brand" href="#inicio"><svg class="lg" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="bgr" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#440154"/><stop offset=".5" stop-color="#21918c"/><stop offset="1" stop-color="#fde725"/></linearGradient></defs><path d="M50 6C78 20 88 54 66 80 60 88 54 93 50 98 46 93 40 88 34 80 12 54 22 20 50 6Z" fill="url(#bgr)"/><path d="M50 96V26" stroke="#0b1a11" stroke-width="3" opacity=".5"/></svg>Tomato LED-NDVI</a>
+<nav aria-label="Secciones"><a href="#inicio">Inicio</a><a href="#estudiantes">Estudiantes</a><a href="#profundiza">Profundiza</a><a href="#futuro">Futuro 2027</a><a href="#contacto">Contacto</a></nav></div></header>
+<main>
 
-<section class="hero" id="inicio">
-  <div>
-    <span class="tag">Semana de la Ciencia y la Tecnología · Murcia</span>
-    <h1>Tomato-AI: mira una planta con luz que tus ojos no ven</h1>
-    <p class="lead">Un aparato portátil de unos 500 € que mide si una planta está sana usando una cámara normal y otra que ve infrarrojo. Desarrollado en el Reto TomatoLED-NDVI de la UPCT.</p>
-    <p><a href="#lab"><button type="button">Probar el NDVI tú mismo</button></a></p>
-  </div>
-  <figure class="scan" style="margin:auto" aria-label="Animación: una hoja vista en color normal y, al pasar la línea, en falso color NDVI">
-    <svg viewBox="0 0 200 200" aria-hidden="true">
-      <defs><clipPath id="lf"><path d="M100 18C150 40 168 98 130 150 118 166 108 176 100 188 92 176 82 166 70 150 32 98 50 40 100 18Z"/></clipPath>
-      <linearGradient id="vir" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#440154"/><stop offset=".3" stop-color="#3b528b"/><stop offset=".55" stop-color="#21918c"/><stop offset=".8" stop-color="#5ec962"/><stop offset="1" stop-color="#fde725"/></linearGradient></defs>
-      <path d="M100 18C150 40 168 98 130 150 118 166 108 176 100 188 92 176 82 166 70 150 32 98 50 40 100 18Z" fill="#2f9e4f"/>
-      <g stroke="#1b6b34" stroke-width="2" fill="none" clip-path="url(#lf)"><path d="M100 188V30M100 70 70 50M100 70 130 50M100 105 66 84M100 105 134 84M100 140 76 122M100 140 124 122"/></g>
-    </svg>
-    <svg class="nd" viewBox="0 0 200 200" aria-hidden="true">
-      <rect width="200" height="200" fill="#0b1a11"/>
-      <path d="M100 18C150 40 168 98 130 150 118 166 108 176 100 188 92 176 82 166 70 150 32 98 50 40 100 18Z" fill="url(#vir)"/>
-      <g stroke="#fde725" stroke-width="2" fill="none" opacity=".55" clip-path="url(#lf)"><path d="M100 188V30M100 70 70 50M100 70 130 50M100 105 66 84M100 105 134 84"/></g>
-    </svg>
-    <div class="ln"></div>
-    <figcaption><span>Cámara RGB: lo que ves</span><span>Mapa NDVI: lo que mide</span></figcaption>
-  </figure>
+<section class="tab" id="inicio">
+ <div class="hero"><div>
+  <span class="tag">Semana de la Ciencia y la Tecnología · Murcia</span>
+  <h1>Tomato LED-NDVI: mira una planta con luz que no ves</h1>
+  <p class="lead">Un fenotipador portátil de bajo coste que mide la salud de una planta combinando visión por computador y teledetección multiespectral. Proyecto de la UPCT (Reto Tomato LED-NDVI).</p>
+  <div class="stats"><div><b data-n="500" data-p="≈ " data-s=" €">0</b><span>coste aproximado</span></div><div><b data-n="2">0</b><span>cámaras</span></div><div><b data-n="0" data-s=" nube">0</b><span>todo en local</span></div></div>
+ </div>
+ <figure class="scan" aria-label="Una hoja en color normal y, al pasar la línea, en falso color NDVI">
+  <svg viewBox="0 0 200 200" aria-hidden="true"><defs><clipPath id="lf"><path d="M100 18C150 40 168 98 130 150 118 166 108 176 100 188 92 176 82 166 70 150 32 98 50 40 100 18Z"/></clipPath><linearGradient id="vir" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#440154"/><stop offset=".3" stop-color="#3b528b"/><stop offset=".55" stop-color="#21918c"/><stop offset=".8" stop-color="#5ec962"/><stop offset="1" stop-color="#fde725"/></linearGradient></defs>
+  <path d="M100 18C150 40 168 98 130 150 118 166 108 176 100 188 92 176 82 166 70 150 32 98 50 40 100 18Z" fill="#2f9e4f"/><g stroke="#1b6b34" stroke-width="2" fill="none" clip-path="url(#lf)"><path d="M100 188V30M100 70 70 50M100 70 130 50M100 105 66 84M100 105 134 84M100 140 76 122M100 140 124 122"/></g></svg>
+  <svg class="nd" viewBox="0 0 200 200" aria-hidden="true"><rect width="200" height="200" fill="#0b1a11"/><path d="M100 18C150 40 168 98 130 150 118 166 108 176 100 188 92 176 82 166 70 150 32 98 50 40 100 18Z" fill="url(#vir)"/></svg>
+  <div class="ln"></div><figcaption><span>Cámara RGB</span><span>Mapa NDVI</span></figcaption></figure></div>
+ <div class="grid paths">
+  <a class="card rv" href="#estudiantes"><div class="ic">🎒</div><h3>Soy estudiante</h3><p class="sm">Animaciones, un laboratorio interactivo y preguntas para tu trabajo del taller.</p></a>
+  <a class="card rv" href="#profundiza"><div class="ic">🔬</div><h3>Quiero profundizar</h3><p class="sm">Explicación completa: la física, el aparato, el software, sus límites y la comparativa.</p></a>
+  <a class="card rv" href="#futuro"><div class="ic">🤖</div><h3>Qué viene en 2027</h3><p class="sm">Una máquina CNC sobre cultivo hidropónico que observa, decide y actúa.</p></a>
+  <a class="card rv" href="#contacto"><div class="ic">🤝</div><h3>Quiero colaborar</h3><p class="sm">Empresas, patrocinio y colaboración técnica: escríbenos.</p></a></div>
 </section>
 
-<section id="como">
-  <h2>Cómo hace una medición</h2>
-  <p class="lead">Dos cámaras, un soporte que gira y una Raspberry Pi que hace las cuentas. Todo en menos de un minuto y sin internet.</p>
-  <div class="steps">
-    <div class="step"><svg viewBox="0 0 120 90" aria-hidden="true"><rect x="38" y="22" width="44" height="40" rx="8" fill="#14261b"/><circle cx="60" cy="42" r="12" fill="#3b82c4"/><circle cx="60" cy="42" r="5" fill="#0b1a11"/><path d="M20 80c10-14 20-14 30 0M70 80c10-14 20-14 30 0" stroke="#2f9e4f" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
-      <h3>Foto en color</h3><p>La cámara RGB fotografía la planta. El software separa las hojas del suelo y la maceta buscando el color verde (espacio HSV).</p></div>
-    <div class="step"><svg viewBox="0 0 120 90" aria-hidden="true"><g class="rot"><rect x="20" y="36" width="80" height="18" rx="9" fill="#cfd8d2"/><circle cx="30" cy="45" r="11" fill="#14261b"/><circle cx="90" cy="45" r="11" fill="#7a1f12"/></g><circle cx="60" cy="45" r="4" fill="#d93d27"/></svg>
-      <h3>Gira el soporte</h3><p>Se gira el brazo mecánico hasta la cámara NoIR. La pantalla dibuja el contorno de la planta para alinearla con la foto anterior.</p></div>
-    <div class="step"><svg viewBox="0 0 120 90" aria-hidden="true"><defs><linearGradient id="v2" x1="0" x2="1"><stop offset="0" stop-color="#440154"/><stop offset=".5" stop-color="#21918c"/><stop offset="1" stop-color="#fde725"/></linearGradient></defs><rect x="14" y="20" width="92" height="50" rx="8" fill="url(#v2)"/><path d="M20 62 44 40 62 52 84 30 100 36" stroke="#fff" stroke-width="3" fill="none"/></svg>
-      <h3>Mapa NDVI</h3><p>Compara cuánta luz roja y cuánta infrarroja refleja cada píxel. El resultado: un mapa de colores y una nota: bueno, regular o malo.</p></div>
-  </div>
+<section class="tab" id="estudiantes">
+ <span class="tag">Para colegios e institutos</span>
+ <h1>¿Cómo «ve» la luz una planta?</h1>
+ <p class="lead">Una hoja sana se come casi toda la luz roja y rebota la luz infrarroja. Esa diferencia es el truco de Tomato LED-NDVI. Cambia el estado de la hoja y mira qué pasa con los rayos.</p>
+ <div class="sim rv">
+  <svg id="sim" viewBox="0 0 700 300" role="img" aria-label="Simulación de la luz del Sol llegando a una hoja y rebotando hacia una cámara">
+   <g class="sunr"><g stroke="#ffd34d" stroke-width="4" stroke-linecap="round"><path d="M70 62v-22M70 218v22M2 130h-22M138 130h22M22 82l-15-15M118 178l15 15M22 178l-15 15M118 82l15-15"/></g></g>
+   <circle cx="70" cy="130" r="42" fill="#ffc933"/>
+   <path d="M300 235c60-45 190-45 250 0-60 22-190 22-250 0Z" fill="#2f9e4f"/><path d="M300 235c60-14 190-14 250 0" stroke="#1b6b34" stroke-width="3" fill="none"/>
+   <rect x="570" y="28" width="62" height="42" rx="9" fill="#cfd8d2"/><circle cx="601" cy="49" r="13" fill="#14261b"/><circle cx="601" cy="49" r="5" fill="#3b82c4"/>
+   <text x="601" y="92" fill="#cfe3d5" font-size="14" text-anchor="middle" font-family="sans-serif">cámara NoIR</text>
+   <g class="ra" fill="#ff4a3d"><circle r="6"><animateMotion dur="3s" repeatCount="indefinite" path="M110 120L420 222"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;.85;1" dur="3s" repeatCount="indefinite"/></circle>
+    <circle class="x" r="6"><animateMotion dur="3s" begin="1s" repeatCount="indefinite" path="M110 130L400 226"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;.85;1" dur="3s" begin="1s" repeatCount="indefinite"/></circle>
+    <circle class="x" r="6"><animateMotion dur="3s" begin="2s" repeatCount="indefinite" path="M110 140L450 224"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;.85;1" dur="3s" begin="2s" repeatCount="indefinite"/></circle></g>
+   <g class="rb" fill="#ff4a3d"><circle r="6"><animateMotion dur="3.4s" begin=".5s" repeatCount="indefinite" path="M110 125L410 224L590 78"/></circle><circle r="6"><animateMotion dur="3.4s" begin="1.8s" repeatCount="indefinite" path="M110 135L440 225L596 80"/></circle></g>
+   <g class="nb" fill="#d9a7ff"><circle r="6"><animateMotion dur="3.4s" begin=".2s" repeatCount="indefinite" path="M110 150L430 226L598 82"/></circle>
+    <circle class="x" r="6"><animateMotion dur="3.4s" begin="1.2s" repeatCount="indefinite" path="M110 160L460 226L604 84"/></circle>
+    <circle class="x" r="6"><animateMotion dur="3.4s" begin="2.3s" repeatCount="indefinite" path="M110 170L390 226L592 84"/></circle></g>
+   <g font-family="sans-serif" font-size="14"><circle cx="40" cy="282" r="6" fill="#ff4a3d"/><text x="52" y="287" fill="#cfe3d5">luz roja (visible)</text><circle cx="190" cy="282" r="6" fill="#d9a7ff"/><text x="202" y="287" fill="#cfe3d5">infrarrojo cercano (invisible)</text></g>
+  </svg></div>
+ <div class="sw" role="group" aria-label="Estado de la hoja"><button type="button" data-s="ok" aria-pressed="true">🌿 Hoja sana</button><button type="button" data-s="sick" aria-pressed="false">🥀 Hoja con estrés</button></div>
+ <p id="simtxt" class="sm" aria-live="polite" style="max-width:70ch"></p>
+
+ <h2 class="s">El NDVI: una fórmula y un semáforo</h2>
+ <div class="fx rv"><span>NDVI = (NIR − Rojo) / (NIR + Rojo)</span><p class="sm">NIR es la luz infrarroja que devuelve la hoja y Rojo es la luz roja que devuelve. Cuando la hoja se come el rojo y rebota el infrarrojo, el resultado se acerca a +1. El valor siempre está entre −1 y +1: cuanto más alto, más sana.</p></div>
+ <div class="grid sem">
+  <div class="card rv" style="--c:var(--bueno)"><h3>🟢 Bueno · NDVI ≥ 0,50</h3><p class="sm">Planta sana, con mucha clorofila y actividad fotosintética alta.</p></div>
+  <div class="card rv" style="--c:var(--reg)"><h3>🟠 Regular · de 0,20 a 0,50</h3><p class="sm">Estrés moderado: falta de agua o de nutrientes, o inicio de clorosis (amarilleo). Conviene vigilarla.</p></div>
+  <div class="card rv" style="--c:var(--malo)"><h3>🔴 Malo · NDVI &lt; 0,20</h3><p class="sm">Hoja seca, dañada o con casi nada de biomasa activa. Hay que revisarla.</p></div></div>
+ <p class="sm" style="margin-top:1rem">En el laboratorio, los dos porcentajes son cuánta luz roja y cuánta infrarroja devuelve la hoja. Mueve los controles, o prueba los ejemplos, y mira en qué color del semáforo cae el resultado.</p>
+
+ <h2 class="s">Laboratorio: calcula el NDVI</h2>
+ <div class="card lab rv">
+  <div class="leafbox"><svg viewBox="0 0 200 200" role="img" aria-label="Hoja que cambia de color"><path id="leafFill" d="M100 18C150 40 168 98 130 150 118 166 108 176 100 188 92 176 82 166 70 150 32 98 50 40 100 18Z" fill="#2f9e4f"/><g stroke="#0006" stroke-width="2" fill="none"><path d="M100 188V30M100 70 70 50M100 70 130 50M100 105 66 84M100 105 134 84"/></g></svg></div>
+  <div class="ctl"><div class="presets" role="group" aria-label="Ejemplos"><button type="button" data-r="8" data-n="52">Hoja sana</button><button type="button" data-r="18" data-n="35">Con estrés</button><button type="button" data-r="30" data-n="32">Hoja seca</button></div>
+   <label for="rng">Luz roja reflejada <output id="ro"></output></label><input id="rng" type="range" min="2" max="60" value="8">
+   <label for="nir">Infrarrojo reflejado <output id="no"></output></label><input id="nir" type="range" min="2" max="70" value="52">
+   <div class="res" id="res" aria-live="polite"><span class="big" id="nv"></span><strong id="st"></strong> <span id="ds"></span><div class="fm" id="fm"></div>
+    <div class="zones" aria-hidden="true"><i style="width:60%;background:var(--malo)"></i><i style="width:15%;background:var(--reg)"></i><i style="width:25%;background:var(--bueno)"></i><span id="pin"></span></div><div class="zl"><span style="width:60%">Malo</span><span style="width:15%">Regular</span><span style="width:25%">Bueno</span></div></div></div></div>
+
+ <h2 class="s">Así hacemos una medición</h2>
+ <div class="grid steps">
+  <div class="card rv"><h3>Foto en color</h3><p class="sm">La cámara RGB fotografía la planta, igual que lo haría un móvil.</p></div>
+  <div class="card rv"><h3>Marcamos la hoja</h3><p class="sm">El software busca los píxeles verdes y descarta todo lo demás: tierra, maceta y fondo. Solo la hoja entrará en el cálculo.</p></div>
+  <div class="card rv"><h3>Giramos el soporte</h3><p class="sm">Giramos el brazo hasta la cámara infrarroja. En la pantalla aparece el contorno de la planta para alinearla bien.</p></div>
+  <div class="card rv"><h3>Calculamos y puntuamos</h3><p class="sm">En cada píxel de hoja aplicamos la fórmula <code>(NIR − Rojo) / (NIR + Rojo)</code>, hacemos la media y la comparamos con el semáforo.</p></div></div>
+
+ <h2 class="s">Para tu trabajo: glosario</h2>
+ <div class="grid" style="margin-bottom:1.5rem">
+  <div class="card rv"><h3>NDVI</h3><p class="sm">Índice de Vegetación de Diferencia Normalizada. Compara la luz infrarroja y la roja que devuelve una planta para estimar lo sana que está. Va de −1 a +1.</p></div>
+  <div class="card rv"><h3>Fenotipado</h3><p class="sm">Medir de forma sistemática cómo es y cómo está una planta (tamaño, color, salud) para estudiar cómo responde a su ambiente, como la luz, el agua o los nutrientes.</p></div>
+  <div class="card rv"><h3>Segmentación</h3><p class="sm">Separar en una imagen lo que nos interesa (la hoja) de lo que no (suelo, maceta, fondo). Nosotros lo hacemos buscando los píxeles de color verde.</p></div>
+  <div class="card rv"><h3>Falso color</h3><p class="sm">Pintar con colores que sí vemos un dato que no podemos ver. Nuestro mapa NDVI va del morado (poca vegetación activa) al amarillo (mucha).</p></div>
+  <div class="card rv"><h3>Infrarrojo cercano (NIR)</h3><p class="sm">Luz justo más allá del rojo, que el ojo humano no ve. Las hojas sanas la reflejan con mucha fuerza.</p></div>
+  <div class="card rv"><h3>Clorofila</h3><p class="sm">El pigmento verde de las hojas. Absorbe la luz roja y la azul para fabricar azúcares con la fotosíntesis.</p></div>
+  <div class="card rv"><h3>Reflectancia</h3><p class="sm">Porcentaje de luz que una superficie devuelve en lugar de absorber. En el laboratorio, los controles son reflectancias.</p></div>
+  <div class="card rv"><h3>Edge computing</h3><p class="sm">Hacer los cálculos en el propio aparato, sin enviar los datos a internet. Tomato LED-NDVI funciona sin conexión.</p></div></div>
+
+ <details><summary>¿Por qué el infrarrojo delata a una planta enferma?</summary><p>Si la planta sufre, tiene menos clorofila y absorbe menos rojo, y su estructura interna refleja peor el infrarrojo. El NDVI baja antes de que lo notes a simple vista.</p></details>
+ <details><summary>¿Por qué usamos dos cámaras?</summary><p>La normal ayuda a ver y a separar la planta del fondo. La infrarroja mide. Juntas dan una medida más fiable.</p></details>
+ <details><summary>¿Dónde ganan los satélites?</summary><p>Vigilan miles de hectáreas, pero cada píxel mide 10 metros o más. Tomato LED-NDVI mide planta a planta, de cerca.</p></details>
+ <details><summary>Cómo citar este proyecto</summary><p>Tomato LED-NDVI, Reto Tomato LED-NDVI, Universidad Politécnica de Cartagena (UPCT). Semana de la Ciencia y la Tecnología de Murcia.</p></details>
 </section>
 
-<section id="lab">
-  <h2>Laboratorio: calcula el NDVI</h2>
-  <p class="lead">Una hoja sana absorbe casi toda la luz roja (para la fotosíntesis) y refleja mucha luz infrarroja cercana. Mueve los controles y mira cómo cambia la nota.</p>
-  <div class="lab">
-    <div class="leafbox">
-      <svg viewBox="0 0 200 200" role="img" aria-label="Hoja que cambia de color según su salud">
-        <path id="leafFill" d="M100 18C150 40 168 98 130 150 118 166 108 176 100 188 92 176 82 166 70 150 32 98 50 40 100 18Z" fill="#2f9e4f"/>
-        <g stroke="#0006" stroke-width="2" fill="none"><path d="M100 188V30M100 70 70 50M100 70 130 50M100 105 66 84M100 105 134 84"/></g>
-      </svg>
-    </div>
-    <div class="ctl">
-      <div class="presets" role="group" aria-label="Ejemplos">
-        <button type="button" data-r="8" data-n="52">Hoja sana</button>
-        <button type="button" data-r="18" data-n="35">Con estrés</button>
-        <button type="button" data-r="30" data-n="32">Hoja seca</button>
-      </div>
-      <label for="rng">Luz roja reflejada <output id="ro">8 %</output></label>
-      <input id="rng" type="range" min="2" max="60" value="8">
-      <label for="nir">Infrarrojo cercano reflejado <output id="no">52 %</output></label>
-      <input id="nir" type="range" min="2" max="70" value="52">
-      <div class="res" id="res" aria-live="polite">
-        <b class="big" id="nv">+0.73</b>
-        <strong id="st">Bueno</strong> <span id="ds"></span>
-        <div class="formula" id="fm"></div>
-        <div class="zones" aria-hidden="true"><i style="width:60%;background:var(--malo)"></i><i style="width:15%;background:var(--reg)"></i><i style="width:25%;background:var(--bueno)"></i><span id="pin"></span></div>
-        <small class="formula">−1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.2 · 0.5 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1</small>
-      </div>
-    </div>
-  </div>
+<section class="tab" id="profundiza">
+ <span class="tag">Para quien quiere saber más</span>
+ <h1>Profundiza: cómo funciona Tomato LED-NDVI</h1>
+ <p class="lead">Aquí explicamos el proyecto de principio a fin: el problema, la física de la luz y la hoja, el aparato, el software, sus límites y cómo se compara con otras técnicas. Es para cualquier persona curiosa; empieza fácil y se va volviendo técnico.</p>
+
+ <h2 class="s">1 · El problema que queremos resolver</h2>
+ <p>Para cuidar bien un cultivo hay que saber cómo está cada planta y saberlo pronto. Nuestros ojos solo detectan un problema cuando ya es evidente: hojas amarillas, marchitas o con manchas. Pero la planta empieza a sufrir antes, y ese cambio ya altera la luz que sus hojas devuelven, aunque no lo veamos.</p>
+ <p>Las herramientas actuales no cubren bien el caso de «una planta concreta, de cerca, en un invernadero y con poco presupuesto». Los satélites ven píxeles de decenas de metros y se ven frenados por las nubes. Los drones y sus cámaras multiespectrales cuestan miles de euros. Los sensores manuales dan un solo número, sin imagen. Tomato LED-NDVI nació en el Reto Tomato LED-NDVI de la UPCT para llenar ese hueco: medir de cerca, sin tocar ni dañar la planta y por unos 500 €.</p>
+
+ <h2 class="s">2 · Fundamento: la luz y la hoja</h2>
+ <div class="two"><figure class="rv"><img src="assets/paren.jpg" alt="Corte histológico de tejido vegetal teñido: parénquima lagunar" loading="lazy"><figcaption class="c">Parénquima lagunar (mesófilo esponjoso) visto al microscopio.</figcaption></figure>
+  <div><p><strong>La luz roja se absorbe.</strong> Las hojas verdes contienen clorofila, que absorbe con mucha fuerza la luz roja (alrededor de 660 nm) y la azul para hacer la fotosíntesis. Por eso una hoja sana devuelve muy poco rojo.</p>
+  <p><strong>El infrarrojo cercano rebota.</strong> Dentro de la hoja, el parénquima lagunar está formado por células irregulares con huecos de aire. Cada vez que la luz pasa de la pared celular al aire, cambia de dirección, y tantos cambios acaban devolviendo hacia fuera el infrarrojo cercano (alrededor de 850 nm), que la planta casi no usa. Nuestros ojos no ven esa luz, pero un sensor sí.</p></div></div>
+ <p><strong>Qué cambia cuando la planta sufre.</strong> Con falta de agua o de nutrientes baja la clorofila, así que la hoja absorbe menos rojo y refleja más. Si además se degrada la estructura interna, se refleja menos infrarrojo. Las dos cosas empujan el índice hacia abajo.</p>
+ <div class="fx rv"><span>NDVI = (NIR − Rojo) / (NIR + Rojo)</span><p class="sm">Es la diferencia entre el infrarrojo y el rojo reflejados, dividida por su suma. Dividir lo hace menos sensible a la cantidad total de luz que llega. Resulta un valor entre −1 y +1: el agua y las nubes dan valores negativos, el suelo desnudo se acerca a 0 y la vegetación densa suele superar 0,6. Los umbrales de Tomato LED-NDVI (0,50 y 0,20) son los que fijó el reto para este montaje.</p></div>
+
+ <h2 class="s">3 · El aparato: qué lleva dentro</h2>
+ <div class="grid">
+  <div class="card part rv"><img src="assets/rpi.png" alt="Raspberry Pi 5" loading="lazy"><h3>Raspberry Pi 5</h3><p>Ordenador de 4 núcleos (Cortex-A76) que hace de cerebro: gestiona las cámaras, la pantalla y todos los cálculos con Python, OpenCV y NumPy.</p></div>
+  <div class="card part rv"><img src="assets/nvme.png" alt="SSD NVMe 512 GB" loading="lazy"><h3>SSD NVMe de 512 GB</h3><p>Montado sobre la placa M.2 HAT+ (PCIe). Guarda miles de fotos y mapas a gran velocidad sin cargar la tarjeta SD.</p></div>
+  <div class="card part rv"><img src="assets/cam.png" alt="Cámara HQ con lente 6 mm" loading="lazy"><h3>Dos cámaras</h3><p>Una RGB, que ve lo que vemos nosotros, y otra NoIR, sin el filtro que normalmente bloquea el infrarrojo. Ambas capturan a 640×480.</p></div>
+  <div class="card part rv"><img src="assets/filtro.png" alt="Filtro dual-band 660/850 nm" loading="lazy"><h3>Filtro DB660/850</h3><p>Se coloca ante la cámara NoIR y solo deja pasar dos bandas: rojo (660 nm) e infrarrojo cercano (850 nm). Bloquea el resto.</p></div></div>
+ <figure class="card rv" style="margin-top:1rem"><img src="assets/render.png" alt="Modelo 3D del brazo con las cámaras, la carcasa y la pantalla" style="max-width:640px;margin:auto" loading="lazy"><figcaption class="c" style="text-align:center">Brazo giratorio impreso en 3D con las cámaras, la carcasa de la Raspberry y la pantalla táctil capacitiva de 1024×600.</figcaption></figure>
+
+ <h2 class="s">4 · Una medición paso a paso</h2>
+ <div class="grid steps">
+  <div class="card rv"><h3>Poner la planta</h3><p class="sm">Se coloca la planta en el escenario controlado, con fondo negro mate para evitar reflejos. Se escribe su identificador, por ejemplo <code>001_TL</code>.</p></div>
+  <div class="card rv"><h3>Foto RGB y máscara</h3><p class="sm">Se fotografía en color. El software detecta qué píxeles son hoja y crea una máscara. La pantalla ya muestra la planta resaltada con un contorno verde.</p></div>
+  <div class="card rv"><h3>Girar y alinear</h3><p class="sm">Se gira el soporte hasta la cámara NoIR. La silueta de la foto RGB se dibuja sobre la imagen infrarroja en directo, para alinear la planta a mano.</p></div>
+  <div class="card rv"><h3>Cálculo del NDVI</h3><p class="sm">Se calcula el índice en cada píxel y, mientras alineas, la pantalla muestra el valor medio en vivo. Al capturar, se fija la medida.</p></div>
+  <div class="card rv"><h3>Mapa y nota</h3><p class="sm">Se pinta el mapa en falso color y se clasifica la planta como buena, regular o mala según el valor medio.</p></div>
+  <div class="card rv"><h3>Guardado</h3><p class="sm">Se guardan las dos imágenes en el SSD y una entrada en el historial con fecha, hora, valor y estado.</p></div></div>
+
+ <h2 class="s">5 · El software en detalle</h2>
+ <div class="grid">
+  <div class="card rv"><h3>Segmentación por color</h3><p class="sm">La foto RGB se pasa al espacio HSV (tono, saturación y brillo), que separa el color de la intensidad. Se consideran planta los tonos verdes: H entre 25 y 95 (escala de OpenCV, de 0 a 179), con S y V de al menos 30. Después, una apertura y un cierre morfológicos (kernel de 5 píxeles, 2 iteraciones) quitan el ruido y rellenan huecos como nervios y reflejos.</p></div>
+  <div class="card rv"><h3>Solo cuenta la hoja</h3><p class="sm">El NDVI se calcula en toda la imagen, pero la media final se hace solo sobre los píxeles de la máscara. Así la tierra, la maceta o el fondo no falsean el resultado. Fuera de la máscara, el mapa se pinta en gris oscuro.</p></div>
+  <div class="card rv"><h3>Radiometría del sensor NoIR</h3><p class="sm">Con el filtro dual, la matriz de color de la cámara (Bayer) responde así: el canal rojo (R) recoge los 660 nm y el azul (B) recoge el infrarrojo de 850 nm, porque su tinte es transparente al infrarrojo. Por eso aquí el NIR es B y se usa <code>NDVI = (B − K·R) / (B + K·R)</code>. El factor K = 0,50 es empírico: equilibra la respuesta distinta de cada canal y se puede ajustar. El balance de blancos va desactivado y las ganancias fijas, para no alterar la proporción entre canales.</p></div>
+  <div class="card rv"><h3>Mapa en falso color</h3><p class="sm">El valor de −1 a +1 se reparte en 256 niveles y se pinta con la paleta Viridis (de morado a amarillo): los tonos amarillos son vegetación activa y los morados, poca o ninguna.</p></div>
+  <div class="card rv"><h3>Clasificación</h3><p class="sm">Bueno si la media es ≥ 0,50; Regular si está entre 0,20 y 0,50; Malo si es &lt; 0,20. En la interfaz se muestra con el color del semáforo.</p></div>
+  <div class="card rv"><h3>Registro de datos</h3><p class="sm">Cada medida añade una entrada a un archivo JSON local (<code>registro.json</code>) y guarda las imágenes en el SSD. Desde la pantalla se puede buscar por planta, filtrar por estado, ver las fotos o borrar medidas. Todo funciona sin conexión a internet.</p></div></div>
+ <pre class="rv" aria-label="Ejemplo de entrada del registro">{
+  "id_planta": "001_TL",
+  "fecha": "25/03/2026",  "hora": "10:42:07",
+  "ndvi": 0.6123,  "estado": "BUENO",
+  "archivo_rgb": "..._RGB.png",
+  "archivo_ndvi": "..._NDVI.png"
+}</pre>
+ <p class="sm">Ejemplo ilustrativo de una entrada del historial.</p>
+
+ <h2 class="s">6 · Límites y mejoras</h2>
+ <details><summary>No es una medida calibrada</summary><p>El NDVI de Tomato LED-NDVI es un índice relativo útil para comparar plantas y seguir su evolución, no un valor absoluto como el de un instrumento calibrado con un panel de reflectancia de referencia. Calibrar con un panel es una mejora natural.</p></details>
+ <details><summary>Depende de la iluminación</summary><p>Hace falta una luz que tenga infrarrojo cercano (el Sol o luminarias adecuadas). Con luz sin infrarrojo, el canal NIR queda vacío y el cálculo no tiene sentido. Por eso la pantalla de depuración muestra los valores medios de cada canal.</p></details>
+ <details><summary>Alineación entre cámaras</summary><p>Las dos cámaras no ven exactamente lo mismo, porque se cambia de una a otra girando un soporte. La silueta guía mejora la alineación, pero sigue siendo manual y puede haber pequeños desajustes.</p></details>
+ <details><summary>Umbrales heurísticos</summary><p>Los umbrales 0,50 y 0,20 son una clasificación práctica del reto, no una validación biofísica para todas las especies. Una especie con hojas muy amarillas o azuladas puede necesitar ajustar el rango HSV.</p></details>
+
+ <h2 class="s">7 · Frente a otras escalas</h2>
+ <div class="two"><figure class="rv"><img src="assets/sentinel.jpg" alt="Mapa NDVI generado con datos Sentinel" loading="lazy"><figcaption class="c">Mapa NDVI a partir de datos Sentinel: cada píxel abarca decenas de metros.</figcaption></figure>
+  <figure class="rv"><img src="assets/sat.png" alt="Satélite de observación de la Tierra" style="max-width:360px;margin:auto" loading="lazy"><figcaption class="c" style="text-align:center">Satélite de observación: cubre enormes extensiones con poco detalle.</figcaption></figure></div>
+ <div class="ov card rv"><table><thead><tr><th>Sistema</th><th>Coste</th><th>Resolución</th><th>Frecuencia</th><th>Limitaciones</th></tr></thead><tbody>
+  <tr><td>Satélite (Sentinel-2, Landsat)</td><td>Gratis</td><td>10–30 m/píxel</td><td>5–12 días</td><td>Nubes; inútil en invernadero; sin planta individual</td></tr>
+  <tr><td>Sensor manual (GreenSeeker)</td><td>1.500–3.500 €</td><td>Puntual</td><td>Manual</td><td>Un número, sin mapa</td></tr>
+  <tr><td>Cámara multiespectral de dron</td><td>3.500–15.000 €+</td><td>≈ 1–5 cm/píxel</td><td>Por vuelo</td><td>Normativa, clima y procesado posterior</td></tr>
+  <tr class="me"><td>Tomato LED-NDVI</td><td>≈ 500 €</td><td>Nivel de hoja</td><td>Tiempo real</td><td>Solo escaneo proximal</td></tr></tbody></table></div>
 </section>
 
-<section id="hardware">
-  <h2>Qué lleva dentro</h2>
-  <p class="lead">Piezas comerciales y un brazo diseñado e impreso en 3D. Todo el cálculo se hace en el propio aparato.</p>
-  <div class="hw">
-    <div class="part"><img src="assets/rpi.png" alt="Raspberry Pi 5" loading="lazy"><h3>Raspberry Pi 5</h3><p>El cerebro: procesador de 4 núcleos que calcula el NDVI de cada píxel con Python, OpenCV y NumPy.</p></div>
-    <div class="part"><img src="assets/nvme.png" alt="Disco SSD NVMe de 512 GB sobre la placa M.2 HAT+" loading="lazy"><h3>SSD de 512 GB</h3><p>Guarda miles de fotos RGB y mapas NDVI con su fecha y planta, rápido y sin usar la tarjeta SD.</p></div>
-    <div class="part"><img src="assets/cam.png" alt="Cámara HQ de Raspberry Pi con lente de 6 mm" loading="lazy"><h3>Dos cámaras</h3><p>Una RGB para ver y segmentar. Otra NoIR (sin filtro infrarrojo) para captar el infrarrojo cercano.</p></div>
-    <div class="part"><img src="assets/filtro.png" alt="Filtro óptico de doble banda 660/850 nanómetros" loading="lazy"><h3>Filtro 660/850 nm</h3><p>Deja pasar solo dos «colores»: rojo (660 nm) e infrarrojo (850 nm). Con esas dos bandas se calcula el NDVI.</p></div>
-  </div>
-  <div class="big-img"><img src="assets/render.png" alt="Modelo 3D del brazo con las dos cámaras, la carcasa de la Raspberry Pi y la pantalla" loading="lazy"><div><h3>El brazo giratorio</h3><p>Diseñado en 3D: lleva la carcasa roja con la Raspberry, la pantalla táctil y un soporte que gira para cambiar de cámara apuntando siempre al mismo sitio.</p></div></div>
+<section class="tab" id="futuro">
+ <span class="tag">Evolución prevista para 2027</span>
+ <h1>Agricultura de precisión automatizada para cultivo hidropónico</h1>
+ <p class="lead">El siguiente paso es una máquina CNC sobre un cultivo hidropónico, con un cabezal multiherramienta que se desplaza hasta cada planta y registra su estado y su crecimiento en una base de datos. Con esa información, la Raspberry Pi orquesta de forma automática el riego, la solución nutritiva y el resto de tareas del cultivo.</p>
+ <div class="gantry rv"><svg viewBox="0 0 700 260" role="img" aria-label="Animación de un cabezal que recorre una fila de plantas hidropónicas">
+  <rect x="30" y="40" width="640" height="10" rx="5" fill="#cfd8d2"/><rect x="30" y="215" width="640" height="14" rx="4" fill="#3b4f43"/>
+  <g class="hd"><rect x="60" y="40" width="14" height="40" fill="#cfd8d2"/><rect x="40" y="78" width="54" height="34" rx="8" fill="#d93d27"/><circle cx="67" cy="95" r="8" fill="#14261b"/><path d="M67 112v18" stroke="#9fe3b4" stroke-width="3" stroke-dasharray="4 4"/></g>
+  <g fill="#2f9e4f"><path d="M110 215c-22-30-6-60 0-70 6 10 22 40 0 70Z"/><path d="M200 215c-22-30-6-60 0-70 6 10 22 40 0 70Z"/><path d="M290 215c-22-30-6-60 0-70 6 10 22 40 0 70Z"/><path d="M380 215c-22-30-6-60 0-70 6 10 22 40 0 70Z"/><path d="M470 215c-22-30-6-60 0-70 6 10 22 40 0 70Z"/><path d="M560 215c-22-30-6-60 0-70 6 10 22 40 0 70Z"/></g>
+    <text x="350" y="248" text-anchor="middle" fill="#cfe3d5" font-size="13" font-family="sans-serif">canal hidropónico</text></svg></div>
+ <div class="loop">
+  <div class="card" style="--i:0"><h3>1 · Observar</h3><p class="sm">Las cámaras viajan en el cabezal hasta cada planta y la miden una a una.</p></div>
+  <div class="card" style="--i:1"><h3>2 · Registrar</h3><p class="sm">Estado, crecimiento y análisis en una base de datos por planta.</p></div>
+  <div class="card" style="--i:2"><h3>3 · Decidir</h3><p class="sm">La Raspberry orquesta el sistema con los datos acumulados.</p></div>
+  <div class="card" style="--i:3"><h3>4 · Actuar</h3><p class="sm">Control automático del riego y de la solución nutritiva.</p></div></div>
+ <p>El resultado es un cultivo que se vigila y se cuida solo, planta a planta, con decisiones basadas en datos.</p>
+ <p>Buscamos personas y entidades que quieran acompañarnos: <a href="#contacto">hablemos</a>.</p>
 </section>
 
-<section id="costes">
-  <h2>¿Por qué es especial? Cuesta mucho menos</h2>
-  <p class="lead">Existen formas de medir el NDVI desde el espacio, con drones o con sensores de mano. Comparadas con Tomato-AI:</p>
-  <div class="bars" id="bars">
-    <div class="bar" data-w="2"><div class="t">Satélite (Sentinel-2, Landsat)<span>Gratis</span></div><div class="track"><div class="fill"></div></div><small>Un píxel mide 10–30 m, no sirve en invernadero ni para una planta sola.</small></div>
-    <div class="bar" data-w="25"><div class="t">Sensor manual (tipo GreenSeeker)<span>1.500–3.500 €</span></div><div class="track"><div class="fill"></div></div><small>Solo da un número, sin imagen.</small></div>
-    <div class="bar" data-w="60"><div class="t">Cámara multiespectral de dron<span>3.500–15.000 €+</span></div><div class="track"><div class="fill"></div></div><small>Requiere volar, buen tiempo y procesar después.</small></div>
-    <div class="bar me" data-w="5"><div class="t">Tomato-AI<span>≈ 500 €</span></div><div class="track"><div class="fill"></div></div><small>Mide de cerca, en tiempo real y con detalle de hoja. No vale para grandes extensiones.</small></div>
-  </div>
+<section class="tab" id="contacto">
+ <span class="tag">Empresas, instituciones y particulares</span>
+ <h1>Construyamos la versión 2027 juntos</h1>
+ <p class="lead">Si te interesa colaborar, patrocinar o aportar material o conocimiento, estaremos encantados de hablar contigo. Da igual que seas una empresa, una institución, un centro educativo o una persona a título individual: toda ayuda suma.</p>
+ <div class="grid" style="margin-bottom:1.5rem">
+  <div class="card rv"><h3>Dr. Cristóbal Javier Solano Navarro</h3><p class="sm">Profesor coordinador del proyecto<br><a href="mailto:cristobal.solano@upct.es">cristobal.solano@upct.es</a></p></div>
+  <div class="card rv"><h3>José Manuel Gamoneda Martín</h3><p class="sm">Alumno coordinador del proyecto<br><a href="mailto:josemanuel.gamoneda@edu.upct.es">josemanuel.gamoneda@edu.upct.es</a></p></div></div>
+ <div class="card rv" style="max-width:640px"><h3>Escríbenos</h3>
+ <form id="cf"><label class="f">Nombre<input type="text" id="cn" required autocomplete="name"></label>
+  <label class="f">Empresa o entidad<input type="text" id="ce" autocomplete="organization"></label>
+  <label class="f">Te interesa<select id="ct"><option>Patrocinio</option><option>Colaboración técnica</option><option>Material o equipos</option><option>Otro</option></select></label>
+  <label class="f">Mensaje<textarea id="cm" rows="4"></textarea></label>
+  <button class="btn p" type="submit">Preparar correo</button><p class="sm">Se abrirá tu programa de correo con el mensaje listo para enviar a ambos coordinadores.</p></form></div>
 </section>
-
-<section id="trabajo">
-  <h2>Para tu trabajo del taller</h2>
-  <div class="gl">
-    <div><b>NDVI</b>Índice de vegetación de diferencia normalizada: (NIR − Rojo) / (NIR + Rojo). Va de −1 a +1.</div>
-    <div><b>Fenotipado</b>Medir cómo es y cómo está una planta (tamaño, color, salud) de forma sistemática.</div>
-    <div><b>NIR</b>Infrarrojo cercano: luz que no vemos, pero que las hojas sanas reflejan con fuerza.</div>
-    <div><b>Edge computing</b>Hacer los cálculos en el propio aparato, sin enviarlos a la nube.</div>
-    <div><b>Segmentación</b>Separar en la imagen lo que es planta de lo que no (suelo, maceta, fondo).</div>
-    <div><b>Falso color</b>Pintar con colores visibles un dato que no se ve, como el NDVI.</div>
-  </div>
-  <h3>Preguntas para pensar</h3>
-  <details><summary>¿Por qué una hoja sana es «brillante» en infrarrojo?</summary><p>La estructura interna de las hojas dispersa y refleja el infrarrojo cercano, mientras que la clorofila absorbe el rojo. Si la planta sufre, absorbe menos rojo y/o refleja menos infrarrojo, y el NDVI baja.</p></details>
-  <details><summary>¿Por qué no basta con mirar si la hoja está verde?</summary><p>El NDVI puede delatar un problema (falta de agua o nutrientes, por ejemplo) antes de que se note a simple vista. La cámara normal ayuda a ver el contexto; la infrarroja, a medir.</p></details>
-  <details><summary>¿Dónde falla Tomato-AI y dónde ganan los satélites?</summary><p>Tomato-AI mide de cerca y planta a planta. Para vigilar miles de hectáreas, un satélite o un dron cubren mucho más terreno aunque con menos detalle.</p></details>
-  <details><summary>¿Qué hace el aparato con la sombra, la tierra o la maceta?</summary><p>Las descarta con la segmentación: solo cuentan los píxeles de planta al calcular la media del NDVI.</p></details>
-  <details><summary>Cómo citar este proyecto</summary><p>Tomato-AI, Reto TomatoLED-NDVI, Universidad Politécnica de Cartagena (UPCT). Divulgación en la Semana de la Ciencia y la Tecnología de Murcia.</p></details>
-</section>
-
-<footer>
-  <p><strong>Tomato-AI</strong> · Universidad Politécnica de Cartagena · Reto TomatoLED-NDVI</p>
-  <p>Gracias por visitarnos en la Semana de la Ciencia y la Tecnología de Murcia.</p>
-</footer>
+</main>
+<footer><div class="logos" style="justify-content:center;margin:0 0 1rem"><div class="pill"><img src="assets/upct.png" alt="UPCT"></div><div class="pill"><img src="assets/weybot.png" alt="Wey-Bot"></div></div>
+<p><strong>Tomato LED-NDVI</strong> · Universidad Politécnica de Cartagena · Reto Tomato LED-NDVI</p><p>Semana de la Ciencia y la Tecnología de Murcia</p></footer>
 
 <script>
 (function(){
-  var $=function(i){return document.getElementById(i)};
-  var r=$('rng'),n=$('nir');
-  function upd(){
-    var R=+r.value,N=+n.value,v=(N-R)/(N+R);
-    $('ro').textContent=R+' %';$('no').textContent=N+' %';
-    var st,col,ds;
-    if(v>=.5){st='Bueno';col='var(--bueno)';ds='Actividad fotosintética alta.'}
-    else if(v>=.2){st='Regular';col='var(--reg)';ds='Posible estrés por agua o nutrientes.'}
-    else{st='Malo';col='var(--malo)';ds='Hoja seca, dañada o sin biomasa activa.'}
-    $('nv').textContent=(v>=0?'+':'')+v.toFixed(2);
-    $('nv').style.color=col;$('st').textContent=st;$('ds').textContent=ds;
-    $('res').style.borderColor=col;
-    $('fm').textContent='('+N+' − '+R+') / ('+N+' + '+R+') = '+v.toFixed(2);
-    $('pin').style.left=Math.max(0,Math.min(98,(v+1)/2*100))+'%';
-    var h=Math.max(0,Math.min(120,(v+.1)/.7*120));
-    $('leafFill').setAttribute('fill','hsl('+h+',65%,'+(32+h/12)+'%)');
-  }
-  r.oninput=n.oninput=upd;
-  document.querySelectorAll('[data-r]').forEach(function(b){
-    b.onclick=function(){r.value=b.dataset.r;n.value=b.dataset.n;upd()};
-  });
-  upd();
-  var bars=document.querySelectorAll('.bar');
-  function fill(){bars.forEach(function(b){b.querySelector('.fill').style.width=b.dataset.w+'%'})}
-  if('IntersectionObserver' in window){
-    new IntersectionObserver(function(e,o){if(e[0].isIntersecting){fill();o.disconnect()}},{threshold:.3}).observe($('bars'));
-  }else fill();
+var $=function(i){return document.getElementById(i)},tabs=[].slice.call(document.querySelectorAll('.tab'));
+var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12}):null;
+document.querySelectorAll('.rv').forEach(function(e){io?io.observe(e):e.classList.add('in')});
+function count(){document.querySelectorAll('[data-n]').forEach(function(el){var n=+el.dataset.n,p=el.dataset.p||'',s=el.dataset.s||'',t0=null;function f(t){t0=t0||t;var k=Math.min(1,(t-t0)/1200);el.textContent=p+Math.round(n*(1-Math.pow(1-k,3)))+s;if(k<1)requestAnimationFrame(f)}requestAnimationFrame(f)})}
+function go(){var h=location.hash.slice(1);if(!tabs.some(function(t){return t.id===h}))h='inicio';
+ tabs.forEach(function(t){t.classList.toggle('on',t.id===h)});
+ document.querySelectorAll('nav a').forEach(function(a){a.setAttribute('aria-current',a.getAttribute('href')==='#'+h?'page':'false')});
+ window.scrollTo(0,0);if(h==='inicio')count();}
+window.addEventListener('hashchange',go);go();
+/* simulación */
+var sim=$('sim'),T={ok:'Hoja sana: la clorofila absorbe casi toda la luz roja y las células del interior rebotan el infrarrojo hacia la cámara. NDVI alto.',sick:'Hoja con estrés: absorbe menos luz roja (rebota más) y devuelve menos infrarrojo. El NDVI baja.'};
+document.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){var s=b.dataset.s;sim.classList.toggle('sick',s==='sick');document.querySelectorAll('[data-s]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});$('simtxt').textContent=T[s]}});
+$('simtxt').textContent=T.ok;
+if(window.matchMedia('(prefers-reduced-motion:reduce)').matches&&sim.pauseAnimations)sim.pauseAnimations();
+/* laboratorio */
+var r=$('rng'),n=$('nir');
+function upd(){var R=+r.value,N=+n.value,v=(N-R)/(N+R),st,c,d;
+ $('ro').textContent=R+' %';$('no').textContent=N+' %';
+ if(v>=.5){st='Bueno';c='var(--bueno)';d='Actividad fotosintética alta.'}else if(v>=.2){st='Regular';c='var(--reg)';d='Posible estrés por agua o nutrientes.'}else{st='Malo';c='var(--malo)';d='Hoja seca, dañada o sin biomasa activa.'}
+ $('nv').textContent=(v>=0?'+':'')+v.toFixed(2);$('nv').style.color=c;$('st').textContent=st;$('ds').textContent=d;$('res').style.borderColor=c;
+ $('fm').textContent='('+N+' − '+R+') / ('+N+' + '+R+') = '+v.toFixed(2);
+ $('pin').style.left=Math.max(0,Math.min(98,(v+1)/2*100))+'%';
+ var h=Math.max(0,Math.min(120,(v+.1)/.7*120));$('leafFill').setAttribute('fill','hsl('+h+',65%,'+(32+h/12)+'%)')}
+r.oninput=n.oninput=upd;
+document.querySelectorAll('[data-r]').forEach(function(b){b.onclick=function(){r.value=b.dataset.r;n.value=b.dataset.n;upd()}});upd();
+/* contacto */
+$('cf').onsubmit=function(e){e.preventDefault();
+ var body='Nombre: '+$('cn').value+'\nEntidad: '+$('ce').value+'\nInterés: '+$('ct').value+'\n\n'+$('cm').value;
+ location.href='mailto:cristobal.solano@upct.es?cc=josemanuel.gamoneda@edu.upct.es&subject='+encodeURIComponent('Tomato LED-NDVI · '+$('ct').value)+'&body='+encodeURIComponent(body)};
 })();
 </script>
 </body>

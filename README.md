@@ -1,6 +1,6 @@
-# Tomato-AI · Web divulgativa
+# Tomato LED-NDVI · Web divulgativa
 
-Página para la Semana de la Ciencia y la Tecnología de Murcia sobre el proyecto Tomato-AI (UPCT, Reto TomatoLED-NDVI).
+Página para la Semana de la Ciencia y la Tecnología de Murcia sobre el proyecto Tomato LED-NDVI (UPCT, Reto Tomato LED-NDVI).
 
 - `index.html`: web completa (sin dependencias, salvo las fuentes de Google)
 - `assets/`: imágenes
